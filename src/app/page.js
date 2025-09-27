@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
+  const [time, setTime] = useState(null);
 
   const addTask = () => {
     if (newTask.trim() === "") return;
@@ -21,6 +22,13 @@ export default function Home() {
     setTasks(tasks.filter((_, i) => i !== index));
   };
 
+    useEffect(() => {
+    fetch('/api/test')
+      .then((res) => res.json())
+      .then((data) => setTime(data.time))
+      .catch((err) => console.error(err));
+  }, []);
+
   return (
     <main className="container">
       <h1>Task App ✅</h1>
@@ -34,6 +42,12 @@ export default function Home() {
         />
         <button onClick={addTask}>Add</button>
       </div>
+
+      {time ? (
+        <p>Database time: {time.now}</p>
+      ) : (
+        <p>Loading database time...</p>
+      )}
 
       <ul className="task-list">
         {tasks.map((task, index) => (
